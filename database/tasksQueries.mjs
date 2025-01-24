@@ -151,5 +151,5 @@ export async function getTasksIdsByStatusId(status_id) {
         // convert every task to its status_id
         tasks[i] = tasks[i].status_id;
     }
-    return tasks;
+    return (tasks.length > 0) ? tasks : undefined; 
 } 

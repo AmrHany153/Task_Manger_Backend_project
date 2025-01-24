@@ -1,7 +1,7 @@
 import { param, body } from "express-validator"
 import db from "../../database/index.mjs"
 import { generateValidationRule, idSchema } from "./globalSchemas.mjs";
-import { REQUIRED, OPTIONAL, MUST, MUST_NOT } from "../constants.mjs"
+import { REQUIRED, OPTIONAL, MUST, MUST_NOT, ON_UPDATE, ON_DELETE } from "../constants.mjs"
 import asyncHandler from "express-async-handler";
 
 const table = "statuses";
@@ -21,10 +21,27 @@ const statusSchema = (existenceInRequest) =>
             if (isExist) throw new Error(`Status name is already exist in data base`);
             return true;
         }))
+        
+        
+ 
+// foreignKeysBehavior takes {ON_UPDATE, ON_DELETE}
+const foreignKey = (foreignKeyBehavior) => 
+    generateValidationRule(param, REQUIRED, "id")
+        .custom(asyncHandler(async (value) => {
+            const usedByTheseTasks = await db.getTasksIdsByStatusId(value);
+
+            // if the status used by tasks
+            if (usedByTheseTasks){
+                throw new Error(`${foreignKeyBehavior}: restrict, tasks ids: (${usedByTheseTasks})`);
+            }
+            
+            return true;
+        }))
+
 
 
 // main schema
-export const statusesSchemas = {
+export const statusesSchemas = { // id, status
     post: [
         // global
         idSchema(body, OPTIONAL, table, MUST_NOT),
@@ -36,27 +53,25 @@ export const statusesSchemas = {
         // global
         idSchema(param, REQUIRED, table, MUST),
     ],
-    // TODO 1: build onUpdate schema
     put: [
         // global
-        idSchema(param, REQUIRED, table, MUST),
+        idSchema(param, REQUIRED, table, MUST), /* == */ foreignKey(ON_UPDATE), 
+        idSchema(body, REQUIRED, table, MUST_NOT), 
 
         // local
-        statusSchema(REQUIRED)
-
+        statusSchema(REQUIRED),
     ],
     patch: [
         // global
-        idSchema(param, REQUIRED, table, MUST),
+        idSchema(param, REQUIRED, table, MUST), /* == */ foreignKey(ON_UPDATE),
+        idSchema(body, OPTIONAL, table, MUST_NOT),
 
         // local
-        statusSchema(OPTIONAL)
+        statusSchema(OPTIONAL),
     ],
-    // TODO 1: build onDelete schema
     delete: [
         // global
-        idSchema(param, REQUIRED, table, MUST),
-        
+        idSchema(param, REQUIRED, table, MUST), /* == */ foreignKey(ON_DELETE),
     ],
 }
 

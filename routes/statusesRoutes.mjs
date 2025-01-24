@@ -45,7 +45,7 @@ router.patch("/:id", statusesSchemas.patch, validationErrorHandler,  asyncHandle
     const data = matchedData(req, {locations: ["body"]});
 
     // to return it with the changes
-    let statusBody = await db.getStatus(data.id);
+    let statusBody = await db.getStatus(id);
     statusBody.changed = [];
 
     for (const column in data) {
@@ -57,7 +57,7 @@ router.patch("/:id", statusesSchemas.patch, validationErrorHandler,  asyncHandle
                 break;
 
             case "status":
-                await db.updateStatusName(id, data.status);
+                await db.changeStatusName(id, data.status);
                 statusBody.status = data.status;
                 statusBody.changed.push(column);
                 break;

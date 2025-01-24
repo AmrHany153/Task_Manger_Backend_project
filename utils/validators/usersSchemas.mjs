@@ -2,7 +2,7 @@ import { param, body } from "express-validator"
 import db from "../../database/index.mjs"
 import { generateValidationRule, idSchema, createdAtSchema } from "./globalSchemas.mjs"
 import asyncHandler from "express-async-handler"
-import { REQUIRED, OPTIONAL, MUST } from "../constants.mjs"
+import { REQUIRED, OPTIONAL, MUST, ON_UPDATE, ON_DELETE } from "../constants.mjs"
 
 const table = "users";
 
@@ -37,6 +37,20 @@ const nameSchema = (existenceInRequest) =>
         .not().matches(/[^A-Za-z\s]/).withMessage("Name must only contain letters and spaces").bail()
 
 
+// foreignKeysBehavior takes {ON_UPDATE, ON_DELETE}       
+const foreignKey = (foreignKeyBehavior) => 
+    generateValidationRule(param, REQUIRED, "id")
+        .custom(asyncHandler(async (value) => {
+            const usedByTheseTasks = await db.getTasksIdsByStatusId(value);
+
+            // if the status used by tasks
+            if (usedByTheseTasks){
+                console.log(`${foreignKeyBehavior}: cascade, changed tasks ids: (${usedByTheseTasks})`);
+            }
+            
+            return true;
+        }))
+
         
 // main schema
 export const usersSchemas = {
@@ -57,7 +71,7 @@ export const usersSchemas = {
     ],
     put: [
         // global
-        idSchema(param, REQUIRED, table, MUST),
+        idSchema(param, REQUIRED, table, MUST), /* == */ foreignKey(ON_UPDATE),
         createdAtSchema(OPTIONAL),
 
         // local
@@ -67,7 +81,7 @@ export const usersSchemas = {
     ],
     patch: [
         // global
-        idSchema(param, REQUIRED, table, MUST),
+        idSchema(param, REQUIRED, table, MUST), /* == */ foreignKey(ON_UPDATE),
         createdAtSchema(OPTIONAL),
 
         // local
@@ -77,7 +91,7 @@ export const usersSchemas = {
     ],
     delete: [
         // global
-        idSchema(param, REQUIRED, table, MUST),
+        idSchema(param, REQUIRED, table, MUST), /* == */ foreignKey(ON_DELETE),
         
     ]
 }

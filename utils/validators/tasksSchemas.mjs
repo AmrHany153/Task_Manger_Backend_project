@@ -13,7 +13,6 @@ const titleSchema = (existenceInRequest) => {
         .trim()
         .notEmpty().withMessage('Title is required')
         .isLength({ max: 255 }).withMessage('Title must be less than 255 characters')
-        .escape()
         
 }
 
@@ -21,7 +20,6 @@ const descriptionSchema = (existenceInRequest) => {
     generateValidationRule(body, existenceInRequest, "description")
         .trim()
         .isLength({ max: 1000 }).withMessage('Description must be less than 1000 character')
-        .escape()
 }
 
 
