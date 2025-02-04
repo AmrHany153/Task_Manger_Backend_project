@@ -49,7 +49,7 @@ A robust backend API for task management with role-based access control and grou
 
 (the full documentation is coming soon!)
 
-## Roles
+## Roles 👥
 
 - 🔑 **Login roles**
   - Admin => can access and change everything
