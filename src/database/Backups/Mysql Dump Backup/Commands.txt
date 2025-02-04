@@ -1,8 +1,0 @@
-// To take a backup
-mysqldump -u root -p task_manger > backup_file.sql
-
-// to restore a backup
-mysql -u root -p task_manger < backup_file.sql
-
-
-// make sure that you running these codes from the backup folder in the terminal!

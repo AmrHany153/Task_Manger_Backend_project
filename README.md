@@ -1,6 +1,3 @@
-# Task Manger App
-
-### started at: 2024/12/24# Task_Manger_Backend_project
 # Task Management System API 🚀
 
 [![Node.js](https://img.shields.io/badge/Node.js-18.x-brightgreen)](https://nodejs.org/)
@@ -19,7 +16,7 @@ A robust backend API for task management with role-based access control and grou
 
 - 🗃️ **Hybrid Database Architecture**
   - MySQL: Core data (Users, Tasks, Groups)
-  - MongoDB: Group memberships and (permissions coming soon!)
+  - MongoDB: Group memberships and permissions
 
 - 🛡️ **Advanced Validation**
   - Request validation with express-validator
@@ -44,8 +41,6 @@ A robust backend API for task management with role-based access control and grou
 
 ## API Documentation 📚
 
-[![Run in Postman](https://run.pstmn.io/button.svg)](https://god.gw.postman.com/run-collection/REPLACE_WITH_YOUR_ID)
-
 **Core Endpoints**:
 - `POST /auth/login` - User login
 - `POST /groups` - Create new group (Requires User role)
@@ -53,6 +48,17 @@ A robust backend API for task management with role-based access control and grou
 - `GET /tasks?status=:id&group=:id` - Filter tasks
 
 (the full documentation is coming soon!)
+
+## Roles
+
+- 🔑 **Login roles**
+  - Admin => can access and change everything
+  - User => only can access his tasks
+
+- 👨🏻‍🤝‍👨🏻 **Group roles**
+  - Owner => can access to all group features
+  - Moderator => can access to all group features except deleting
+  - Member => can access his tasks and the group tasks
 
 ## Installation 🛠️
 
@@ -62,15 +68,14 @@ git clone https://github.com/AmrHany153/Task_Manger_Backend_project.git
 cd task-manager-api
 
 # Install dependencies
-npm install 
+npm install express express-session express-validator express-async-handler mongoose mysql2 nodemon passport passport-local bcrypt
 
 # Setup environment
-cp .env.example .env
+cp .env
 # Edit .env with your credentials
 
 # Initialize databases
-mysql -u root -p < database/setup.sql
+mysql -u root -p < /src/database/setup.sql
 
 # Start development server
 npm run dev
-
