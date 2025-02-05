@@ -47,9 +47,9 @@ A robust backend API for task management with role-based access control and grou
 - `PATCH /groups/addMember` - Add group member (Requires Moderator+)
 - `GET /tasks?status=:id&group=:id` - Filter tasks
 
-(the full documentation is coming soon!)
+*(Full documentation coming soon!)*
 
-## Roles
+## Roles 👥
 
 - 🔑 **Login roles**
   - Admin => can access and change everything
@@ -59,6 +59,10 @@ A robust backend API for task management with role-based access control and grou
   - Owner => can access to all group features
   - Moderator => can access to all group features except deleting
   - Member => can access his tasks and the group tasks
+
+## Running HTTPS:
+1. create key.pem and cert.pem files using OpenSSL.
+2. create "ssl" folder and put the files there.
 
 ## Installation 🛠️
 

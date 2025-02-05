@@ -30,8 +30,9 @@ router.post("/", requireAuth, groupsSchemas.post, validationErrorHandler, asyncH
 }))
 
 
-router.post("/leave", requireMemberOrAbove, groupsSchemas.postLeave, validationErrorHandler, asyncHandler(async (req, res) => {
+router.post("/leave", requireMemberOrAbove, asyncHandler(async (req, res) => {
     const { group_id } = matchedData(req, {locations: ["query"]})
+    const { id:user_id } = req.user;
     
     if (req.user.role === OWNER) {
         throw new Error("the owner can't leave the group but can pass it to someone and leave")
@@ -42,8 +43,8 @@ router.post("/leave", requireMemberOrAbove, groupsSchemas.postLeave, validationE
     }
 
     await Promise.all([
-        mongo.Group.deleteOneMember(req.user.id, group_id),
-        mongo.User.deleteOneGroup(req.user.id, group_id)
+        mongo.Group.deleteOneMember(user_id, group_id),
+        mongo.User.deleteOneGroup(user_id, group_id)
     ]);
 
     

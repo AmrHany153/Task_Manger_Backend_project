@@ -1,4 +1,6 @@
 /* eslint-disable no-undef */
+import fs from "fs";
+import https from "https";
 
 // environment variables
 import dotenv from "dotenv"
@@ -15,6 +17,12 @@ import "./strategies/local-strategy.mjs";
 
 // middlewares
 import { setRole } from "./utils/middlewares/setRole.mjs";
+
+
+const options = {
+    key: fs.readFileSync("./ssl/key.pem"),
+    cert: fs.readFileSync("./ssl/cert.pem")
+}
 
 
 const app = express();
@@ -54,6 +62,6 @@ app.use((err, req, res) => {
 });
 
 const PORT = process.env.PORT || 3000;
-app.listen(PORT, () => {
+https.createServer(options, app).listen(PORT, () => {
     console.log(`listening on port ${PORT}`)
 });
